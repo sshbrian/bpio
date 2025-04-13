@@ -9,89 +9,72 @@
     </div>
   </aside>
 </main>
+
 <script>
   // Load X feed dynamically via RSS
   async function loadXFeed() {
     try {
-      const rssUrl = 'https://rss.app/feeds/luIUTxB7anU84Njv.xml';
-      const response = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`);
+      const rssUrl = 'https://rss.app/feeds/v1.1/luIUTxB7anU84Njv.json';
+      const response = await fetch(rssUrl);
       const data = await response.json();
       const feedContainer = document.getElementById('x-feed');
       feedContainer.innerHTML = ''; // Clear existing content
 
-      // Hardcoded user info (customize these values)
-      const avatarUrl = 'https://example.com/my-avatar.jpg'; // Replace with your avatar URL
-      const username = 'My Name'; // Replace with your X username or display name
+      const avatarUrl = data.favicon; // Use the feed's favicon as the avatar image
 
-      data.items.slice(0, 10).forEach(item => { // Limit to 10 posts
+      data.items.forEach(item => {
         const entry = document.createElement('div');
-          entry.innerHTML = `
-          <div box-="square">
-            ${item.description}
+        entry.className = 'box';
+        entry.innerHTML = `
+          <div class="box-header">
+            <img src="${avatarUrl}" class="avatar" alt="${item.authors[0].name}" />
+            <span class="username">${item.authors[0].name}</span>
+            <span class="timestamp">${new Date(item.date_published).toLocaleString()}</span>
+          </div>
+          <div class="box-body">
+            ${item.content_html}
           </div>
         `;
         feedContainer.appendChild(entry);
-      });
-
-      // Add hover event listeners to media links
-      const mediaLinks = document.querySelectorAll('#x-feed a[href^="https://t.co"]');
-      mediaLinks.forEach(link => {
-        link.addEventListener('mouseover', showPreview);
-        link.addEventListener('mouseout', hidePreview);
       });
     } catch (error) {
       console.error('Failed to load X feed:', error);
       document.getElementById('x-feed').innerHTML = '<p>Feed offline. Check back later.</p>';
     }
   }
+
   window.addEventListener('DOMContentLoaded', loadXFeed);
-
-  // Show preview window on hover
-  function showPreview(event) {
-    const link = event.target;
-    const url = link.href;
-
-    // Create or reuse preview div
-    let previewDiv = document.getElementById('preview-div');
-    if (!previewDiv) {
-      previewDiv = document.createElement('div');
-      previewDiv.id = 'preview-div';
-      previewDiv.style.position = 'absolute';
-      previewDiv.style.border = '1px solid #ccc';
-      previewDiv.style.background = '#fff';
-      previewDiv.style.zIndex = '1000';
-      previewDiv.style.padding = '5px';
-      previewDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
-      document.body.appendChild(previewDiv);
-    }
-
-    // Position preview below the link (adjust as needed)
-    const rect = link.getBoundingClientRect();
-    previewDiv.style.left = `${rect.left + window.scrollX}px`;
-    previewDiv.style.top = `${rect.bottom + window.scrollY}px`;
-    previewDiv.innerHTML = 'Loading...';
-    previewDiv.style.display = 'block';
-
-    // Attempt to load as an image
-    const img = new Image();
-    img.onload = () => {
-      previewDiv.innerHTML = '';
-      previewDiv.appendChild(img);
-      img.style.maxWidth = '200px';
-      img.style.maxHeight = '200px';
-    };
-    img.onerror = () => {
-      previewDiv.innerHTML = 'Preview not available';
-    };
-    img.src = url;
-  }
-
-  // Hide preview window
-  function hidePreview() {
-    const previewDiv = document.getElementById('preview-div');
-    if (previewDiv) {
-      previewDiv.style.display = 'none';
-    }
-  }
-
 </script>
+
+<style>
+
+  .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+
+  .username {
+    font-weight: bold;
+    color: #333;
+  }
+
+  .timestamp {
+    margin-left: 10px;
+    color: #666;
+    font-size: 0.9em;
+  }
+
+  .box-body {
+    overflow: hidden;
+  }
+
+  /* Style the Twitter tweet container */
+  .twitter-tweet {
+    margin: 0 !important;
+    padding: 10px;
+    background-color: transparent;
+    border-radius: 5px;
+  }
+</style>
