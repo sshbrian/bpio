@@ -1,0 +1,77 @@
+---
+import { Icon } from 'astro-icon/components';
+---
+
+<nav flex-="row gap:1 justify:between" space-="px:2 py:1" box-="square">
+  <div class="links">
+    <a href="https://x.com/photodude42">
+      <span><Icon name="x" /></span>
+    </a>
+    <a href="https://github.com/sshbrian" target="_blank">
+      <span><Icon name="github-mark-white" /></span>
+    </a>
+  </div>
+</nav>
+<style is:global>
+  .links {
+    display: flex;
+    row-gap: 2ch;
+    column-gap: 1lh;
+
+    a {
+      display: inline-flex;
+      gap: 1ch;
+      text-decoration: none;
+      color: var(--foreground2);
+      span {
+        color: var(--foreground0);
+      }
+      &:focus,
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  nav {
+    container-type: inline-size;
+    container-name: navbar;
+    --box-border-color: var(--background1);
+    white-space: nowrap;
+
+    #home-link {
+      text-decoration: none;
+      font-weight: bold;
+      color: var(--foreground1);
+
+      span:first-of-type {
+        color: #a6e3a1;
+      }
+
+      &:focus,
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  @media (max-width: 80ch) {
+    .links {
+      gap: 1ch;
+
+      a {
+        background-color: var(--background1);
+        padding: 0 1ch;
+        span:last-of-type {
+          display: none;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 48ch) {
+    #home-link span:last-of-type {
+      display: none;
+    }
+  }
+</style>
